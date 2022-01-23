@@ -1,6 +1,5 @@
-const lines = require('fs').readFileSync('./input.txt', 'utf8').split("\n");
-const index = [
-    {
+const lines = require('fs').readFileSync('./data/chunks.json', 'utf8').split("\n");
+const index = [{
         "opening": "(",
         "closing": ")",
         "points": {
@@ -96,12 +95,14 @@ invalidChars.forEach((char) => {
 
     seen.push(char);
 
-    const { points } = query(char);
+    const {
+        points
+    } = query(char);
 
     count = count + findAll.length * points.invalid;
 });
 
-console.log("day 10 pt is: " + count)
+console.log("day 10 part 1 is: " + count)
 
 let scores = [];
 
@@ -122,4 +123,4 @@ invalidLines.forEach((line, index) => {
 
 scores = scores.sort((a, b) => a - b);
 
-console.log(scores[Math.floor(scores.length / 2)]);
+console.log("day 10 part 2 is: " + scores[Math.floor(scores.length / 2)]);

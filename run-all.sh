@@ -1,0 +1,10 @@
+node day-1.js
+node day-2.js
+node day-3.js
+node day-4.js
+node day-5.js
+node day-6.js
+node day-7.js
+node day-8.js
+node day-9.js
+node day-10.js
