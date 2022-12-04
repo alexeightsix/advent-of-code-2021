@@ -1,164 +1,62 @@
 import { readFileSync } from "fs";
 
-const rounds: any = readFileSync('./data/rounds.json', 'utf8').split("\n").map((x) => {
-  if (x !== "") {
-    return x.split(" ")
-  }
-}).filter(function (el) {
-  return el != null;
-});
+const alphabet: string = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-type first_col_letter = "A" | "B" | "C"
-type last_col_letter = "X" | "Y" | "Z"
+const data = readFileSync('./data/day-3.txt', 'utf8').split('\n').filter(String).map((items) => {
+  var chars = items.split('');
+  const middleIndex = Math.ceil(chars.length / 2);
+  return [chars.splice(0, middleIndex), chars.splice(-middleIndex)];
+})
 
-type hand = "ROCK" | "PAPER" | "SCISSORS"
-type player = 1 | 2
-type handScore = 1 | 2 | 3
-type result = undefined | 1 | 2 
-type round_score = 0 | 3 | 6
+const items: Array<string[]> = [];
 
-const letterToHand = (letter: first_col_letter|last_col_letter): hand  => { 
-  switch (letter) {
-    case 'A':
-    case 'X':
-      return 'ROCK';
-    case 'B':
-    case 'Y':
-      return 'PAPER';
-    case 'C':
-    case 'Z':
-      return 'SCISSORS';
-  }
-}
+let total: number = 0;
 
-const calculateWinner = (p1: hand, p2: hand) : player|undefined => {
-  if (p1 === p2) {
-    return
-  } else if (p1 == "ROCK" && p2 == "SCISSORS") {
-    return 1
-  } else if (p1 == "ROCK" && p2 == "PAPER") {
-    return 2
-  } else if (p1 == "PAPER" && p2 == "ROCK") {
-    return 1
-  } else if (p1 == "PAPER" && p2 == "SCISSORS") {
-    return 2
-  } else if (p1 == "SCISSORS" && p2 == "PAPER") {
-    return 1
-  } else if (p1 == "SCISSORS" && p2 == "ROCK") {
-    return 2
-  } else if (p2 == "ROCK" && p1 == "SCISSORS") {
-    return 2
-  } else if (p2 == "ROCK" && p1 == "PAPER") {
-    return 1
-  } if (p2 == "PAPER" && p1 == "ROCK") {
-    return 2
-  } if (p2 == "PAPER" && p1 == "SCISSORS") {
-    return 1
-  } if (p1 == "SCISSORS" && p2 == "PAPER") {
-    return 1
-  } if (p1 == "SCISSORS" && p2 == "ROCK") {
-    return 2
-  }
-}
-
-const handToScore = (z:hand) : handScore => {
-switch (z) {
-    case 'ROCK':
-    return 1;
-      case 'PAPER':
-    return 2;
-      case 'SCISSORS':
-    return 3;
-  }
-}
-
-var score: number = 0;
-
-rounds.forEach((round: Array<first_col_letter|last_col_letter>) => {
-   var opp = letterToHand(round[0])
-   var me = letterToHand(round[1]) 
-   var round_total: round_score = 0;
-   var winner: result = calculateWinner(opp, me)
-
-   switch(winner) {
-    case undefined:
-      round_total = 3;
-      break;
-    case 2:
-      round_total = 6;
-      break;
-  }
-
-  score = score + handToScore(me) + round_total
-
-});
-
-console.log(score)
-
-
-type outcome = "LOOSE" | "WIN" | "DRAW"
-
-const getOutcome = (o: last_col_letter): outcome => {
-  switch(o) {
-    case 'X':
-      return 'LOOSE';
-    case 'Y':
-      return 'DRAW';
-    case 'Z':
-      return 'WIN';
-  }
-};
-
-const swapForLoosingHand = (h: hand): hand => {
-  if (h == "ROCK") {
-    return "SCISSORS";
-  } else if (h == "PAPER") {
-    return "ROCK";
-  } else { 
-    return "PAPER";
-  }
-} 
-
-
-const swapForWinningHand = (h: hand): hand => {
-  if (h == "ROCK") {
-    return "PAPER";
-  } else if (h == "PAPER") {
-    return "SCISSORS";
-  } else { 
-    return "ROCK";
-  }
-} 
-
-var score:number = 0;
-
-rounds.forEach((round: Array<any>) => {
-   var round_total: round_score = 0;
-   var opp = letterToHand(round[0])
-   var me = letterToHand(round[1]) 
-
-   var desired_outcome = getOutcome(round[1]);
-
-    if (desired_outcome == "DRAW") {
-      var me = opp; 
-    } else if (desired_outcome == "WIN") {
-      var me = swapForWinningHand(opp)
-    } else if (desired_outcome == "LOOSE") {
-      var me = swapForLoosingHand(opp)
+data.forEach((sack, x) => {
+  items[x] = [];
+  for (var i = 0; i < sack[1].length; i++) {
+    if (sack[0].includes(sack[1][i])) {
+      if (!items[x].includes(sack[1][i])) {
+        items[x].push(sack[1][i])
+      }
     }
-  
-   var winner: result = calculateWinner(opp, me)
-
-   switch(winner) {
-    case undefined:
-      round_total = 3;
-      break;
-    case 2:
-      round_total = 6;
-      break;
   }
-
-  score = score + handToScore(me) + round_total
 });
 
-console.log(score)
+
+items.flat().forEach((item) => {
+  let points = alphabet.search(item) + 1;
+  total = total + points
+});
+
+console.log("day 3 part 1 " + total)
+
+const new_data: Array<string[]> = readFileSync('./data/day-3.txt', 'utf8').split('\n').filter(String).map((items) => {
+  return items.split('');
+})
+
+var groups: Array<string[]> = [];
+
+for (var i = 0; i < new_data.length; i += 3) {
+
+  if (!groups[i]) {
+    groups[i] = [];
+  }
+
+  for (var x = 0; x < new_data[i].length; x++) {
+    if (new_data[i + 1].includes(new_data[i][x]) && new_data[i + 2].includes(new_data[i][x])) {
+      if (!groups[i].includes(new_data[i][x])) {
+        groups[i].push(new_data[i][x])
+      }
+    }
+  }
+}
+
+total = 0;
+
+groups.flat().forEach((item) => {
+  let points = alphabet.search(item) + 1;
+  total = total + points
+});
+
+console.log("day 3 part 2 " + total)
