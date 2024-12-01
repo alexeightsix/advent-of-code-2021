@@ -20,8 +20,7 @@ second.sort()
 let diff = 0
 
 for (var i = 0; i < input.length; i++) {
-  tmp = [first[i], second[i]].sort()
-  tmp = tmp[1] - tmp[0]
+  tmp = Math.abs(first[i] - second[i])
   diff = diff + tmp
 }
 
